@@ -1,0 +1,24 @@
+"D:\JetBrains\CLion\CLion 2024.3.1.1\bin\cmake\win\x64\bin\cmake.exe" -DCMAKE_BUILD_TYPE=Debug "-DCMAKE_MAKE_PROGRAM=D:/JetBrains/CLion/CLion 2024.3.1.1/bin/ninja/win/x64/ninja.exe" -G Ninja -S D:\joshua_aroka\github_repository_projects\projects\unity_school_assignment\Project2\BlockKuzushi_Joshua_Aroka\BlockKuzushi -B D:\joshua_aroka\github_repository_projects\projects\unity_school_assignment\Project2\BlockKuzushi_Joshua_Aroka\BlockKuzushi\cmake-build-debug
+-- Getting raylib from Github
+CMake Deprecation Warning at cmake-build-debug/_deps/raylib-src/CMakeLists.txt:1 (cmake_minimum_required):
+  Compatibility with CMake < 3.5 will be removed from a future version of
+  CMake.
+
+  Update the VERSION argument <min> value or use a ...<max> suffix to tell
+  CMake that the project does not need compatibility with older versions.
+
+
+-- Testing if -Werror=pointer-arith can be used -- compiles
+-- Testing if -Werror=implicit-function-declaration can be used -- compiles
+-- Testing if -fno-strict-aliasing can be used -- compiles
+-- Using raylib's GLFW
+-- Including Win32 support
+-- Audio Backend: miniaudio
+-- Building raylib static library
+-- Generated build type: Debug
+-- Compiling with the flags:
+--   PLATFORM=PLATFORM_DESKTOP
+--   GRAPHICS=GRAPHICS_API_OPENGL_33
+-- Configuring done (1.3s)
+-- Generating done (0.1s)
+-- Build files have been written to: D:/joshua_aroka/github_repository_projects/projects/unity_school_assignment/Project2/BlockKuzushi_Joshua_Aroka/BlockKuzushi/cmake-build-debug
