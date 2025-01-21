@@ -1,50 +1,39 @@
 #include <stdio.h>
 #include <raylib.h>
 
-int main(void) {
-    const int screenWidth = 800;
-    const int screenHeight = 600;
+int main() {
+    const int screenWidth = 1400;
+    const int screenHeight = 800;
 
     SetConfigFlags(FLAG_MSAA_4X_HINT);
     InitWindow(screenWidth, screenHeight, "BlockKuzushi");
 
-    Vector2 ballPosition = { GetScreenWidth()/2.0f, GetScreenHeight()/2.0f};
-    Vector2 ballSpeed = {5.0f, 4.0f};
-    int ballRadius = 50;
+    Rectangle PlayerRectanglePosition = { screenWidth/2.8f - 25, screenHeight/1.2f - 1.5f - 25, 450, 30};
+    const float RectangleSpeed = 900.0f;
+    
 
-    bool pause = 0;
-    int framesCounter = 0;
 
     SetTargetFPS(60);
 
     while (!WindowShouldClose()) {
-        if (IsKeyPressed(KEY_SPACE)) pause = !pause;
+        float deltaTime = GetFrameTime();
+        
+        if (IsKeyDown(KEY_RIGHT)) PlayerRectanglePosition.x += RectangleSpeed * deltaTime;
+        if (IsKeyDown(KEY_LEFT)) PlayerRectanglePosition.x -= RectangleSpeed * deltaTime;
 
-        if (!pause) {
-            ballPosition.x += ballSpeed.x;
-            ballPosition.y += ballSpeed.y;
-
-            if ((ballPosition.x >= (GetScreenWidth() - ballRadius)) || (ballPosition.x <= ballRadius)) ballSpeed.x *= -1.0f;
-            if ((ballPosition.y >= (GetScreenHeight() - ballRadius)) || (ballPosition.y <= ballRadius)) ballSpeed.y *= -1.0f;
-        }
-        else framesCounter++;
+        if (PlayerRectanglePosition.x < 0) PlayerRectanglePosition.x = 0;
+        if (PlayerRectanglePosition.y < 0) PlayerRectanglePosition.y = 0;
+        if (PlayerRectanglePosition.x > screenWidth) PlayerRectanglePosition.x = screenWidth;
+        if (PlayerRectanglePosition.y > screenHeight) PlayerRectanglePosition.y = screenHeight;
 
         BeginDrawing();
-
         ClearBackground(BLACK);
 
-        DrawCircleV(ballPosition, (float)ballRadius, MAROON);
-        DrawText("PRESS SPACE TO PAUSE GAME", 10, GetScreenHeight() - 25, 20, LIGHTGRAY);
-
-        if (pause && ((framesCounter/30)%2)) DrawText("PAUSED", 350, 200, 30, WHITE);
-
-        DrawFPS(10, 10);
-        void DrawRectangle(int startPosX, int startPosY , int endPosX, int endPosY, Color color);
-
-
-        bool IsKeyPressed(KEY_LEFT, KEY_RIGHT, KEY_DOWN, KEY_UP);
+        DrawText("USE THE LEFT AND RIGHT ARROW KEYS TO MOVE THE PLAYER", 350, 750, 20, WHITE);
+        DrawRectangleRec(PlayerRectanglePosition, WHITE);
 
         EndDrawing();
     }
     CloseWindow();
+
 }

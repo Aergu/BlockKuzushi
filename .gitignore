@@ -111,3 +111,4 @@ cmake-build-debug/.cmake/api/v1/query/cache-v2
 .idea/editor.xml
 .idea/BlockKuzushi.iml
 .idea/.name
+cmake-build-debug/Testing/Temporary/LastTest.log
