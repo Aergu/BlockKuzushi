@@ -42,6 +42,15 @@ int main() {
     const float ballSpeed = 900.0f;
     bool ballLaunched = false;
 
+    /*
+    typedef struct {
+        bool isVisible;
+        int points;
+        Color color;
+    } block_data;
+
+    block_data blocks[BLOCK_ROWS][BLOCK_COLUMNS]; */
+
     Rectangle blocks[BLOCK_ROWS][BLOCK_COLUMNS];
     bool blockVisible[BLOCK_ROWS][BLOCK_COLUMNS] = { 0 };
     int blockPoints[BLOCK_ROWS][BLOCK_COLUMNS];
@@ -100,12 +109,18 @@ int main() {
             if (IsKeyPressed(KEY_UP)) pauseMenuOption = (pauseMenuOption + 3 - 1) % 3;
             if (IsKeyPressed(KEY_DOWN)) pauseMenuOption = (pauseMenuOption + 1) % 3;
 
+            enum {
+                Resume,
+                Restart,
+                Quit
+            };
+
             if (IsKeyPressed(KEY_ENTER)) {
                 switch (pauseMenuOption) {
-                    case 0:
+                    case Resume:
                         isPaused = false;
                         break;
-                    case 1:
+                    case Restart:
                         ballPosition = (Vector2){PlayerRectanglePosition.x + PlayerRectanglePosition.width / 2, PlayerRectanglePosition.y - 10};
                         ballVelocity = (Vector2){0, 0 };
                         ballLaunched = false;
@@ -120,19 +135,22 @@ int main() {
                             }
                         }
                         break;
-                    case 2:
+                    case Quit:
                         CloseWindow();
                         return 0;
                 }
             }
         }
 
+        // Bonus timer logic:
         if (bonusTimer > 0.0f) {
             bonusTimer -= deltaTime;
             if (bonusTimer <= 0.0f) {
                 pointMultiplier = 1.0f;
             }
         }
+
+        // Game over screen:
         if (isGameOver) {
             if (IsKeyPressed(KEY_SPACE)) {
                 ballPosition = (Vector2){ PlayerRectanglePosition.x + PlayerRectanglePosition.width / 2, PlayerRectanglePosition.y - 10 };
