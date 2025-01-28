@@ -1,10 +1,12 @@
 #include <stdio.h>
 #include <raylib.h>
 #include <stdlib.h>
+#include <time.h>
 
 #define BLOCK_ROWS 5
 #define BLOCK_COLUMNS 10
 #define BLOCK_HEIGHT 30
+#define BONUS_DURATION 10.0f
 
 bool CheckCollisionBallRect(Vector2 ballPosition, float ballRadius, Rectangle rect) {
     return ballPosition.y + ballRadius >= rect.y &&
@@ -32,12 +34,12 @@ int main() {
     InitWindow(screenWidth, screenHeight, "BlockKuzushi");
 
     Rectangle PlayerRectanglePosition = { screenWidth / 2.8f - 25, screenHeight / 1.2f - 1.5f - 25, 450, 30 };
-    const float RectangleSpeed = 900.0f;
+    const float RectangleSpeed = 1800.0f;
 
     Vector2 ballPosition = { PlayerRectanglePosition.x + PlayerRectanglePosition.width / 2, PlayerRectanglePosition.y - 10 };
     Vector2 ballVelocity = { 0, 0 };
     const float ballRadius = 10.0f;
-    const float ballSpeed = 500.0f;
+    const float ballSpeed = 900.0f;
     bool ballLaunched = false;
 
     Rectangle blocks[BLOCK_ROWS][BLOCK_COLUMNS];
@@ -48,6 +50,9 @@ int main() {
     float totalBlockWidth = screenWidth - 20;
     float blockWidth = totalBlockWidth / BLOCK_COLUMNS;
     float startX = 10;
+
+
+    srand(time(NULL));
 
     for (int row = 0; row < BLOCK_ROWS; row++) {
         for (int col = 0; col < BLOCK_COLUMNS; col++) {
@@ -75,6 +80,8 @@ int main() {
     }
 
     int score = 0;
+    float pointMultiplier = 1.0f;
+    float bonusTimer = 0.0f;
     bool isPaused = false;
     bool isGameOver = false;
     bool isVictory = false;
@@ -83,10 +90,49 @@ int main() {
     SetTargetFPS(60);
 
     while (!WindowShouldClose()) {
+        float deltaTime = GetFrameTime();
+
         if (IsKeyPressed(KEY_B) && !isGameOver && !isVictory) {
             isPaused = !isPaused;
         }
 
+        if (isPaused) {
+            if (IsKeyPressed(KEY_UP)) pauseMenuOption = (pauseMenuOption + 3 - 1) % 3;
+            if (IsKeyPressed(KEY_DOWN)) pauseMenuOption = (pauseMenuOption + 1) % 3;
+
+            if (IsKeyPressed(KEY_ENTER)) {
+                switch (pauseMenuOption) {
+                    case 0:
+                        isPaused = false;
+                        break;
+                    case 1:
+                        ballPosition = (Vector2){PlayerRectanglePosition.x + PlayerRectanglePosition.width / 2, PlayerRectanglePosition.y - 10};
+                        ballVelocity = (Vector2){0, 0 };
+                        ballLaunched = false;
+                        isPaused = false;
+                        score = 0;
+                        bonusTimer = 0.0f;
+                        pointMultiplier = 1.0f;
+
+                        for (int row = 0; row < BLOCK_ROWS; row++) {
+                            for (int col = 0; col < BLOCK_COLUMNS; col++) {
+                                blockVisible[row][col] = true;
+                            }
+                        }
+                        break;
+                    case 2:
+                        CloseWindow();
+                        return 0;
+                }
+            }
+        }
+
+        if (bonusTimer > 0.0f) {
+            bonusTimer -= deltaTime;
+            if (bonusTimer <= 0.0f) {
+                pointMultiplier = 1.0f;
+            }
+        }
         if (isGameOver) {
             if (IsKeyPressed(KEY_SPACE)) {
                 ballPosition = (Vector2){ PlayerRectanglePosition.x + PlayerRectanglePosition.width / 2, PlayerRectanglePosition.y - 10 };
@@ -96,6 +142,8 @@ int main() {
                 isPaused = false;
                 isVictory = false;
                 score = 0;
+                bonusTimer = 0.0f;
+                pointMultiplier = 1.0f;
 
                 for (int row = 0; row < BLOCK_ROWS; row++) {
                     for (int col = 0; col < BLOCK_COLUMNS; col++) {
@@ -111,6 +159,8 @@ int main() {
                 isVictory = false;
                 isPaused = false;
                 score = 0;
+                bonusTimer = 0.0f;
+                pointMultiplier = 1.0f;
 
                 for (int row = 0; row < BLOCK_ROWS; row++) {
                     for (int col = 0; col < BLOCK_COLUMNS; col++) {
@@ -119,8 +169,6 @@ int main() {
                 }
             }
         } else if (!isPaused) {
-            float deltaTime = GetFrameTime();
-
             if (IsKeyDown(KEY_RIGHT)) PlayerRectanglePosition.x += RectangleSpeed * deltaTime;
             if (IsKeyDown(KEY_LEFT)) PlayerRectanglePosition.x -= RectangleSpeed * deltaTime;
 
@@ -160,7 +208,14 @@ int main() {
                         if (blockVisible[row][col] &&
                             CheckCollisionBallRect(ballPosition, ballRadius, blocks[row][col])) {
                             ballVelocity.y *= -1;
-                            score += blockPoints[row][col];
+
+                            score += blockPoints[row][col] * pointMultiplier;
+
+                            if ((rand() % 100) < 10 && bonusTimer <= 0.0f) {
+                                pointMultiplier = 2.0f; // Double points
+                                bonusTimer = BONUS_DURATION;
+                            }
+
                             blockVisible[row][col] = false;
                         }
                     }
@@ -172,33 +227,6 @@ int main() {
 
                 if (ballPosition.y - ballRadius > screenHeight) {
                     isGameOver = true;
-                }
-            }
-        } else {
-            if (IsKeyPressed(KEY_DOWN)) pauseMenuOption = (pauseMenuOption + 1) % 3;
-            if (IsKeyPressed(KEY_UP)) pauseMenuOption = (pauseMenuOption + 3 - 1) % 3;
-
-            if (IsKeyPressed(KEY_ENTER)) {
-                switch (pauseMenuOption) {
-                    case 0:
-                        isPaused = false;
-                        break;
-                    case 1:
-                        ballPosition = (Vector2){ PlayerRectanglePosition.x + PlayerRectanglePosition.width / 2, PlayerRectanglePosition.y - 10 };
-                        ballVelocity = (Vector2){ 0, 0 };
-                        ballLaunched = false;
-                        isPaused = false;
-                        score = 0;
-
-                        for (int row = 0; row < BLOCK_ROWS; row++) {
-                            for (int col = 0; col < BLOCK_COLUMNS; col++) {
-                                blockVisible[row][col] = true;
-                            }
-                        }
-                        break;
-                    case 2:
-                        CloseWindow();
-                        return 0;
                 }
             }
         }
@@ -222,8 +250,14 @@ int main() {
                 Color color = (i == pauseMenuOption) ? WHITE : GRAY;
                 DrawText(menuOptions[i], screenWidth / 2 - MeasureText(menuOptions[i], 30) / 2, 300 + i * 50, 30, color);
             }
+
         } else {
-            DrawText(TextFormat("SCORE: %d", score), 650, 700, 20, WHITE);
+            DrawText(TextFormat("SCORE: %d", score), 660, 700, 20, WHITE);
+
+            if (bonusTimer > 0.0f) {
+                DrawText("BONUS ACTIVE!", screenWidth / 2 - MeasureText("BONUS ACTIVE!", 30) / 2, 600, 30, YELLOW);
+            }
+
             DrawRectangleRec(PlayerRectanglePosition, WHITE);
             DrawCircleV(ballPosition, ballRadius, RED);
 
@@ -231,12 +265,15 @@ int main() {
                 for (int col = 0; col < BLOCK_COLUMNS; col++) {
                     if (blockVisible[row][col]) {
                         DrawRectangleRec(blocks[row][col], blockColors[row][col]);
-                        const char* pointsText = TextFormat("%d", blockPoints[row][col]);
+
+                        int displayPoints = blockPoints[row][col];
+                        if (bonusTimer > 0.0f) {
+                            displayPoints *= (int)pointMultiplier;
+                        }
+                        const char *pointsText = TextFormat("%d", displayPoints);
                         int textWidth = MeasureText(pointsText, 10);
-                        DrawText(pointsText,
-                                 blocks[row][col].x + (blocks[row][col].width - textWidth) / 2,
-                                 blocks[row][col].y + (blocks[row][col].height - 10) / 2,
-                                 10, BLACK);
+                        DrawText(pointsText, blocks[row][col].x + (blocks[row][col].width - textWidth) / 2,
+                                blocks[row][col].y + (blocks[row][col].height - textWidth) / 2, 10, BLACK);
                     }
                 }
             }
