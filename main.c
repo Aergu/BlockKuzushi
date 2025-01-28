@@ -58,15 +58,15 @@ int main() {
                 BLOCK_HEIGHT
             };
             blockVisible[row][col] = true;
-            blockPoints[row][col] = (row + 1) * 10;
+            blockPoints[row][col] = (BLOCK_ROWS - row) * 100;
 
-            if (blockPoints[row][col] <= 10) {
+            if (blockPoints[row][col] <= 100) {
                 blockColors[row][col] = BLUE;
-            } else if (blockPoints[row][col] <= 20) {
+            } else if (blockPoints[row][col] <= 200) {
                 blockColors[row][col] = GREEN;
-            } else if (blockPoints[row][col] <= 30) {
+            } else if (blockPoints[row][col] <= 300) {
                 blockColors[row][col] = YELLOW;
-            } else if (blockPoints[row][col] <= 40) {
+            } else if (blockPoints[row][col] <= 400) {
                 blockColors[row][col] = ORANGE;
             } else {
                 blockColors[row][col] = RED;
@@ -88,7 +88,7 @@ int main() {
         }
 
         if (isGameOver) {
-            if (IsKeyPressed(KEY_ENTER)) {
+            if (IsKeyPressed(KEY_SPACE)) {
                 ballPosition = (Vector2){ PlayerRectanglePosition.x + PlayerRectanglePosition.width / 2, PlayerRectanglePosition.y - 10 };
                 ballVelocity = (Vector2){ 0, 0 };
                 ballLaunched = false;
@@ -104,7 +104,7 @@ int main() {
                 }
             }
         } else if (isVictory) {
-            if (IsKeyPressed(KEY_ENTER)) {
+            if (IsKeyPressed(KEY_SPACE)) {
                 ballPosition = (Vector2){ PlayerRectanglePosition.x + PlayerRectanglePosition.width / 2, PlayerRectanglePosition.y - 10 };
                 ballVelocity = (Vector2){ 0, 0 };
                 ballLaunched = false;
@@ -208,11 +208,11 @@ int main() {
 
         if (isGameOver) {
             DrawText("GAME OVER", screenWidth / 2 - MeasureText("GAME OVER", 50) / 2, screenHeight / 2 - 100, 50, RED);
-            DrawText("PRESS ENTER TO RESTART", screenWidth / 2 - MeasureText("PRESS ENTER TO RESTART", 20) / 2, screenHeight / 2, 20, WHITE);
+            DrawText("PRESS SPACE TO RESTART", screenWidth / 2 - MeasureText("PRESS SPACE TO RESTART", 20) / 2, screenHeight / 2, 20, WHITE);
             DrawText(TextFormat("FINAL SCORE: %d", score), screenWidth / 2 - MeasureText(TextFormat("FINAL SCORE: %d", score), 20) / 2, screenHeight / 2 + 50, 20, WHITE);
         } else if (isVictory) {
             DrawText("YOU WIN!", screenWidth / 2 - MeasureText("YOU WIN!", 50) / 2, screenHeight / 2 - 100, 50, GREEN);
-            DrawText("PRESS ENTER TO PLAY AGAIN", screenWidth / 2 - MeasureText("PRESS ENTER TO PLAY AGAIN", 20) / 2, screenHeight / 2, 20, WHITE);
+            DrawText("PRESS SPACE TO PLAY AGAIN", screenWidth / 2 - MeasureText("PRESS SPACE TO PLAY AGAIN", 20) / 2, screenHeight / 2, 20, WHITE);
             DrawText(TextFormat("FINAL SCORE: %d", score), screenWidth / 2 - MeasureText(TextFormat("FINAL SCORE: %d", score), 20) / 2, screenHeight / 2 + 50, 20, WHITE);
         } else if (isPaused) {
             DrawText("PAUSE MENU", screenWidth / 2 - MeasureText("PAUSE MENU", 40) / 2, 200, 40, YELLOW);
@@ -223,7 +223,7 @@ int main() {
                 DrawText(menuOptions[i], screenWidth / 2 - MeasureText(menuOptions[i], 30) / 2, 300 + i * 50, 30, color);
             }
         } else {
-            DrawText(TextFormat("SCORE: %d", score), 20, 20, 20, WHITE);
+            DrawText(TextFormat("SCORE: %d", score), 650, 700, 20, WHITE);
             DrawRectangleRec(PlayerRectanglePosition, WHITE);
             DrawCircleV(ballPosition, ballRadius, RED);
 
